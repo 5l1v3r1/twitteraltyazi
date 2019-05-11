@@ -1,0 +1,50 @@
+import twitter, time
+
+conskey = ""
+conssec = ""
+acctokkey = ""
+acctoksec = ""
+
+api = twitter.Api(consumer_key=conskey,
+                  consumer_secret=conssec,
+                  access_token_key=acctokkey,
+                  access_token_secret=acctoksec)
+                  
+print("Kullanıcı Adı:",api.VerifyCredentials().name)
+print("---------------------------------")
+
+altyazi = []
+temparr = []
+f = open("altyazi.txt", "r")
+
+for satir in f:
+  temparr.append(satir)
+  if satir == "\n":
+    #temparr = temparr[:-1]
+    altyazi.append("".join(temparr))
+    temparr = []
+f.close()
+
+print("Toplam Atılacak Tweet Sayısı:",len(altyazi))
+print()
+print("Fazla karakter kontrolü yapılıyor...")
+
+sorun = False
+for altyaz in altyazi:
+  if len(altyaz) > 280:
+    sorun = True
+    print(altyaz)
+if sorun:
+  print()
+  print("280 karakterden uzun altyazı var")
+else:
+  print("Sorun yok")
+  #Tweet at
+  for altyaz in altyazi:
+    try:
+      status = api.PostUpdate(altyaz)
+      print("Tweet atıldı:",altyaz)
+      print()
+      time.sleep(5)
+    except:
+      print("--- Tweet atarken hata oldu: " , status,sep="")

@@ -1,0 +1,39 @@
+import twitter, time, math
+
+conskey = ""
+conssec = ""
+acctokkey = ""
+acctoksec = ""
+twitterusername = ""
+
+api = twitter.Api(consumer_key=conskey,
+                  consumer_secret=conssec,
+                  access_token_key=acctokkey,
+                  access_token_secret=acctoksec)
+                  
+print("Kullanıcı Adı:",api.VerifyCredentials().name)
+print("---------------------------------")
+
+kullanici = api.GetUser(screen_name=twitterusername)
+toplamtweet = kullanici.statuses_count
+loopsayisi = math.ceil(toplamtweet / 4)
+sontid = int()
+altyazi = []
+
+print("LOOP:",loopsayisi)
+for x in range(loopsayisi):
+  tweetler = api.GetUserTimeline(screen_name=twitterusername, count=5,max_id=sontid)
+  if len(tweetler) > 1:
+    for y in range(len(tweetler)-1):
+      altyazi.append(tweetler[y].text)
+    sontid = tweetler[-1].id
+  if len(tweetler) == 1:
+    altyazi.append(tweetler[0].text)
+
+altyazilar = reversed(altyazi)
+
+f = open("indirilen_altyazi.txt", "a")
+for yazi in altyazilar:
+  satir = yazi.replace("&lt;","<").replace("&gt;",">") + "\n\n"
+  f.write(satir)
+f.close()
